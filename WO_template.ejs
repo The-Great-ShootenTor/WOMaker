@@ -12,7 +12,8 @@
   <div class="page">
     <header>
       <div class="header" id="header">
-        <% if (order['Logo (Reference)'] && order['Logo (Reference)'][0]) { %>
+        <% const order = data.order; const items = data.items; const optimization = data.optimization; %>
+        <% if (order && order['Logo (Reference)'] && order['Logo (Reference)'][0]) { %>
           <img src="<%= order['Logo (Reference)'][0].url %>" alt="Logo" style="height:50px;" />
         <% } %>
         <h1>Work Order #: <%= order['WO #'] %></h1>
