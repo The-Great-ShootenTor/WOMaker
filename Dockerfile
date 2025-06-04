@@ -53,10 +53,6 @@ RUN npm install
 # Copy app source code
 COPY . .
 
-# Set Puppeteer to skip Chromium download
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
-
 # Expose app port
 EXPOSE 3000
 
