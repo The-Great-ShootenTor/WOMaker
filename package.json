@@ -1,13 +1,15 @@
 {
-  "name": "pdf-generator",
+  "name": "pdf-generator-app",
   "version": "1.0.0",
   "main": "server.js",
+  "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "postinstall": "puppeteer install"
   },
   "dependencies": {
+    "ejs": "^3.1.9",
     "express": "^4.18.2",
-    "puppeteer": "^21.3.8",
-    "ejs": "^3.1.9"
+    "puppeteer": "^21.3.8"
   }
 }
