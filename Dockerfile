@@ -5,6 +5,8 @@ FROM ghcr.io/puppeteer/puppeteer:latest
 WORKDIR /app
 
 # Copy package.json and install dependencies
+FROM node:18-slim
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 COPY package*.json ./
 RUN npm install
 
@@ -16,3 +18,5 @@ EXPOSE 3000
 
 # Start the server
 CMD ["node", "server.js"]
+
+
