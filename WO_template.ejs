@@ -12,17 +12,17 @@
   <div class="page">
     <header>
       <div class="header" id="header">
-        <% const order = data.order; const items = data.items; const optimization = data.optimization; %>
-        <% if (order && order['Logo (Reference)'] && order['Logo (Reference)'][0]) { %>
+        <% const order = data?.order || {}; const items = data?.items || []; const optimization = data?.optimization || {}; %>
+        <% if (order['Logo (Reference)'] && order['Logo (Reference)'][0]) { %>
           <img src="<%= order['Logo (Reference)'][0].url %>" alt="Logo" style="height:50px;" />
         <% } %>
-        <h1>Work Order #: <%= order['WO #'] %></h1>
+        <h1>Work Order #: <%= order['WO #'] || '' %></h1>
         <p>Customer: <%= order['Customer Name']?.[0] || '' %></p>
         <p>Ship To: <%= order['Ship to Address']?.[0] || '' %></p>
         <p>Delivery Contact: <%= order['Delivery Contact Name']?.[0] || '' %> (<%= order['Delivery Phone #']?.[0] || '' %>)</p>
-        <p>PO #: <%= order['PO Number'] %></p>
-        <p>Received: <%= order['Received'] %></p>
-        <p>Scheduled Ship Date: <%= order['Scheduled Ship Date'] %></p>
+        <p>PO #: <%= order['PO Number'] || '' %></p>
+        <p>Received: <%= order['Received'] || '' %></p>
+        <p>Scheduled Ship Date: <%= order['Scheduled Ship Date'] || '' %></p>
       </div>
     </header>
 
@@ -85,7 +85,7 @@
     <footer>
       <div class="footer" id="footer">
         <p>Page <span class="pageNumber"></span> of <span class="totalPages"></span></p>
-        <p>Generated on: <%= order['Work Order Generated On'] %></p>
+        <p>Generated on: <%= order['Work Order Generated On'] || '' %></p>
         <p>Contact: <%= order['Primary  Email']?.[0] || '' %></p>
       </div>
     </footer>
