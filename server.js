@@ -28,10 +28,12 @@ app.post('/generate-pdf', async (req, res) => {
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
     const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: { top: '1in', bottom: '1in', left: '1in', right: '1in' }
-    });
+        width: '8.5in', // A4 width
+        height: '11in', // A4 height
+        printBackground: true,
+        margin: { top: '.25in', bottom: '.25in', left: '.25in', right: '.25in' }
+      });
+
 
     await browser.close();
 
