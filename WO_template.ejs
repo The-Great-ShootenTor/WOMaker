@@ -4,87 +4,200 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Work Order</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    /* Add your existing CSS styles here */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 2em;
+      color: #000;
+    }
+    header, footer {
+      position: fixed;
+      width: 100%;
+      left: 0;
+      right: 0;
+      padding: 1em;
+      background: #fff;
+    }
+    header {
+      top: 0;
+      border-bottom: 4px solid rgb(7, 31, 61);
+    }
+    footer {
+      bottom: 0;
+      border-top: 1px solid #ccc;
+      text-align: center;
+      display: flex;
+      justify-content: space-between;
+    }
+    .page {
+      page-break-after: always;
+      padding-top: 8em;
+      padding-bottom: 6em;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2em;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5em;
+      text-align: left;
+      font-size: 12px;
+    }
+    th {
+      background-color: rgb(7, 31, 61);
+      color: white;
+    }
+    h1, h2, h3 {
+      margin: 0 0 0.5em 0;
+    }
+    .material-block {
+      margin-top: 2em;
+    }
+    .ASAP {
+      padding: 10px;
+      background-color: rgb(180, 60, 23);
+      color: white;
+      font-weight: bold;
+      border-radius: 10px;
+      width: fit-content;
+      margin-top: 10px;
+    }
+    .headerLeft {
+      float: left;
+    }
+    .headerRight {
+      float: right;
+      text-align: right;
+    }
+    .clearfix::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
   </style>
 </head>
 <body>
+  <% const order = data?.order || {}; const items = data?.items || []; const optimization = data?.optimization || {}; %>
   <div class="page">
-    <header>
-      <div class="header" id="header">
-        <% const order = data?.order || {}; const items = data?.items || []; const optimization = data?.optimization || {}; %>
-        <% if (order['Logo (Reference)'] && order['Logo (Reference)'][0]) { %>
-          <img src="<%= order['Logo (Reference)'][0].url %>" alt="Logo" style="height:50px;" />
-        <% } %>
-        <h1>Work Order #: <%= order['WO #'] || '' %></h1>
+    <header class="clearfix">
+      <div class="headerLeft">
+        <h1>WORK ORDER: <%= order['WO #'] || '' %></h1>
+        <p>PO#: <%= order['PO Number'] || '' %></p>
         <p>Customer: <%= order['Customer Name']?.[0] || '' %></p>
         <p>Ship To: <%= order['Ship to Address']?.[0] || '' %></p>
-        <p>Delivery Contact: <%= order['Delivery Contact Name']?.[0] || '' %> (<%= order['Delivery Phone #']?.[0] || '' %>)</p>
-        <p>PO #: <%= order['PO Number'] || '' %></p>
-        <p>Received: <%= order['Received'] || '' %></p>
-        <p>Scheduled Ship Date: <%= order['Scheduled Ship Date'] || '' %></p>
+        <p><strong>Notes:</strong> <%= order['Order Notes'] || '' %></p>
+      </div>
+      <div class="headerRight">
+        <p>Ship Date: <%= order['Scheduled Ship Date'] || '' %></p>
+        <% if (order['ASAP']) { %>
+          <div class="ASAP">ASAP</div>
+        <% } %>
       </div>
     </header>
 
     <main>
-      <table class="line-items">
+      <table>
         <thead>
           <tr>
-            <th>Item</th>
-            <th>Quantity</th>
-            <th>Weight</th>
-            <th>Notes</th>
+            <th>Qty</th>
+            <th>Machine</th>
+            <th>Build Notes</th>
+            <th>Welder</th>
           </tr>
         </thead>
         <tbody>
           <% items.forEach(item => { %>
             <tr>
-              <td><%= item.name %></td>
               <td><%= item.quantity %></td>
-              <td><%= item.weight %></td>
-              <td><%= item.notes %></td>
+              <td><%= item.name %></td>
+              <td><%= item.notes || '' %></td>
+              <td></td>
             </tr>
-
-            <% if (item.cuts?.length > 0) { %>
-              <tr><td colspan="4"><strong>Cuts:</strong></td></tr>
-              <tr>
-                <th>Material</th>
-                <th>Length</th>
-                <th>Quantity</th>
-                <th>Cut Type</th>
-              </tr>
-              <% item.cuts.forEach(cut => { %>
-                <tr>
-                  <td><%= cut.material %></td>
-                  <td><%= cut.length %></td>
-                  <td><%= cut.quantity %></td>
-                  <td><%= cut.cut_type %></td>
-                </tr>
-              <% }) %>
-            <% } %>
           <% }) %>
         </tbody>
       </table>
 
-      <% if (optimization && optimization.materials) { %>
-      <section class="optimization">
-        <h2>Material Optimization</h2>
-        <% Object.entries(optimization.materials).forEach(([materialKey, materialData]) => { %>
-          <div class="material-block">
-            <h3><%= materialKey %> - Total Bars: <%= materialData.total_bars %>, Waste: <%= materialData.total_waste %></h3>
-            <% materialData.bars.forEach((bar, idx) => { %>
-              <p>Bar <%= idx + 1 %>: Used - <%= bar.used %>, Waste - <%= bar.waste %></p>
-              <p>Cuts: <%= bar.cuts.join(', ') %></p>
-            <% }) %>
-          </div>
-        <% }) %>
-      </section>
-      <% } %>
+      <table>
+        <thead>
+          <tr>
+            <th>Qty</th>
+            <th>Machine</th>
+            <th>Build Notes</th>
+            <th>Drilled By</th>
+            <th>Weight</th>
+            <th>Pallet</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach(item => { %>
+            <tr>
+              <td><%= item.quantity %></td>
+              <td><%= item.name %></td>
+              <td><%= item.notes || '' %></td>
+              <td></td>
+              <td><%= item.weight %></td>
+              <td></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <% items.forEach(item => { %>
+        <div style="margin-top: 2em">
+          <p><%= item.quantity %> - <%= item.name %> <%= item.notes || '' %></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Qty</th>
+                <th>Size</th>
+                <th>Cut</th>
+                <th>Steel</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% (item.cuts || []).forEach(cut => { %>
+                <tr>
+                  <td><%= cut.quantity %></td>
+                  <td><%= cut.length %></td>
+                  <td><%= cut.cut_type %></td>
+                  <td><%= cut.material %></td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% }) %>
+
+      <h2>Steel</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Qty</th>
+            <th>Steel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% Object.entries(optimization.materials || {}).forEach(([name, mat]) => { %>
+            <tr>
+              <td><%= mat.total_bars %></td>
+              <td><%= name %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
     </main>
 
     <footer>
-      <div class="footer" id="footer">
-        <p>Page <span class="pageNumber"></span> of <span class="totalPages"></span></p>
+      <div>
+        <img src="https://washmachinebases.com/a/A/Artboard%201%20copy.png" alt="Image" style="height: 60px; object-fit: contain;">
+      </div>
+      <p class="poppins-bold" style="font-size: 20px;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></p>
+      <div>
         <p>Generated on: <%= order['Work Order Generated On'] || '' %></p>
         <p>Contact: <%= order['Primary  Email']?.[0] || '' %></p>
       </div>
