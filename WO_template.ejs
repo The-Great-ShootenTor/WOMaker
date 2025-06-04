@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Work Order</title>
+  <style>
+    /* Add your existing CSS styles here */
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="header" id="header">
+        <img src="<%= order['Logo (Reference)'][0].url %>" alt="Logo" style="height:50px;" />
+        <h1>Work Order #: <%= order['WO #'] %></h1>
+        <p>Customer: <%= order['Customer Name'][0] %></p>
+        <p>Ship To: <%= order['Ship to Address'][0] %></p>
+        <p>Delivery Contact: <%= order['Delivery Contact Name'][0] %> (<%= order['Delivery Phone #'][0] %>)</p>
+        <p>PO #: <%= order['PO Number'] %></p>
+        <p>Received: <%= order['Received'] %></p>
+        <p>Scheduled Ship Date: <%= order['Scheduled Ship Date'] %></p>
+      </div>
+    </header>
+
+    <main>
+      <table class="line-items">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Weight</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach(item => { %>
+            <tr>
+              <td><%= item.name %></td>
+              <td><%= item.quantity %></td>
+              <td><%= item.weight %></td>
+              <td><%= item.notes %></td>
+            </tr>
+
+            <% if (item.cuts && item.cuts.length > 0) { %>
+              <tr><td colspan="4"><strong>Cuts:</strong></td></tr>
+              <tr>
+                <th>Material</th>
+                <th>Length</th>
+                <th>Quantity</th>
+                <th>Cut Type</th>
+              </tr>
+              <% item.cuts.forEach(cut => { %>
+                <tr>
+                  <td><%= cut.material %></td>
+                  <td><%= cut.length %></td>
+                  <td><%= cut.quantity %></td>
+                  <td><%= cut.cut_type %></td>
+                </tr>
+              <% }) %>
+            <% } %>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <section class="optimization">
+        <h2>Material Optimization</h2>
+        <% Object.entries(optimization.materials).forEach(([materialKey, materialData]) => { %>
+          <div class="material-block">
+            <h3><%= materialKey %> - Total Bars: <%= materialData.total_bars %>, Waste: <%= materialData.total_waste %></h3>
+            <% materialData.bars.forEach((bar, idx) => { %>
+              <p>Bar <%= idx + 1 %>: Used - <%= bar.used %>, Waste - <%= bar.waste %></p>
+              <p>Cuts: <%= bar.cuts.join(', ') %></p>
+            <% }) %>
+          </div>
+        <% }) %>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer" id="footer">
+        <p>Page <span class="pageNumber"></span> of <span class="totalPages"></span></p>
+        <p>Generated on: <%= order['Work Order Generated On'] %></p>
+        <p>Contact: <%= order['Primary  Email'][0] %></p>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
