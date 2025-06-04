@@ -1,3 +1,12 @@
+const express = require('express');
+const puppeteer = require('puppeteer');
+const fs = require('fs');
+const path = require('path');
+const ejs = require('ejs');
+
+const app = express(); // <== this is the line you were missing!
+app.use(express.json({ limit: '10mb' }));
+
 app.post('/generate-pdf', async (req, res) => {
   const payload = Array.isArray(req.body) ? req.body[0] : req.body;
   const data = {
@@ -36,4 +45,9 @@ app.post('/generate-pdf', async (req, res) => {
     console.error('PDF generation error:', err);
     res.status(500).send('PDF generation failed');
   }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`PDF generator running on port ${PORT}`);
 });
