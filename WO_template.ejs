@@ -255,37 +255,31 @@ tbody {
       page-break-before: always;
     }
 
-    .page-spacer:first-child {
-      display: none; /* No margin before first item on first page */
-    }
-
-    .item-grid {
+/* General styling */
+.item-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: space-between;
 }
 
-/* Each grid item is 48% width (2 per row) */
 .grid-item {
   width: 48%;
   box-sizing: border-box;
   page-break-inside: avoid;
   break-inside: avoid;
-  padding-top: 275px; /* simulates page top margin */
 }
 
-/* Only apply spacing if the item is near top of a page */
+/* Simulate top spacing for items that might land at top of page */
 @media print {
-  .grid-item::before {
-    content: "";
-    display: block;
-    height: 0;
+  .grid-item:nth-child(odd) {
+    margin-top: 0.5in;
   }
 
-  .grid-item:first-child {
-    padding-top: 0; /* don’t add spacing to first item */
+  .grid-item:nth-child(1) {
+    margin-top: 0; /* first item should not have extra margin */
   }
+}
   </style>
   </head>
 
