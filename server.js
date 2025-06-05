@@ -1,62 +1,477 @@
-const express = require('express');
-const puppeteer = require('puppeteer');
-const fs = require('fs');
-const path = require('path');
-const ejs = require('ejs');
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Work Order</title>
 
-const app = express(); // <== this is the line you were missing!
-app.use(express.json({ limit: '10mb' }));
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap"
+      rel="stylesheet">
 
-app.post('/generate-pdf', async (req, res) => {
-  const payload = Array.isArray(req.body) ? req.body[0] : req.body;
-  const data = {
-    order: payload.order,
-    items: payload.items,
-    optimization: payload.optimization
-  };
+    <style>
 
-  try {
-    const templatePath = path.join(__dirname, 'WO_template.ejs');
-    const html = await ejs.renderFile(templatePath, { data });
+    .poppins-regular, p {
+      font-family: "Poppins", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+    p {
+      margin: 4px;
+    }
 
-    const browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+    .poppins-medium {
+      font-family: "Poppins", sans-serif;
+      font-weight: 500;
+      font-style: normal;
+    }
 
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    .poppins-bold {
+      font-family: "Poppins", sans-serif;
+      font-weight: 700;
+      font-style: normal;
+    }
+thead {
+  display: table-header-group; /* This is key for repeating headers on print pages */
+}
 
-    const pdfBuffer = await page.pdf({
-  format: 'A4',
-  printBackground: true,
-  displayHeaderFooter: true,
-      margin: {
-        top: '0px', // space for header
-        bottom: '0px' // space for footer
-      },
-      headerTemplate: ``,
-      footerTemplate: `
-        <div style="font-size:10px; text-align:center; width:100%;">
-          Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+tbody {
+  display: table-row-group;
+}
+
+    @page {
+      size: A4;
+      margin: .25in;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12pt;
+      margin: 0;
+      padding: 0;
+      color: #000;
+    }
+
+    .container {
+      padding: 1rem;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      padding-bottom: 0.2rem;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 4px solid rgb(7, 31, 61);
+    }
+
+    .header,
+    .footer {
+      text-align: center;
+      
+      margin-bottom: .25rem;
+      padding-bottom: 0.25rem;
+    }
+
+    .footer {
+      border-top: 1px solid #ccc;
+      margin-top: 2rem;
+      padding-top: 0.5rem;
+      display: flex;
+      justify-content: space-between
+    }
+
+    .section {
+      margin-bottom: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+    }
+
+    .table1 th,
+    .table1 td {
+      border: 1px solid rgb(7, 31, 61);
+      padding: 8px;
+      text-align: left;
+    }
+
+    .table1 th {
+      background-color:rgb(7, 31, 61);
+      color: white;
+    }
+
+    .table2 {
+      width: 80%;
+    }
+    .table2 th,
+    .table2 td {
+      border: 1px solid rgb(212, 135, 19);
+      padding: 8px;
+      text-align: left;
+    }
+
+    .table2 th {
+      background-color:rgb(212, 135, 19);
+      color: white;
+    }
+     .table3 {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .table3 th,
+    .table3 td {
+      border: 1px solid rgb(9, 65, 16);
+      padding: 8px;
+      text-align: left;
+    }
+
+    .table3 th {
+      background-color:rgb(9, 65, 16);
+      color: white;
+    }
+    .table4 {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .table4 th,
+    .table4 td {
+      border: 1px solid rgb(43, 16, 92);
+      padding: 8px;
+      text-align: left;
+    }
+
+    .table4 th {
+      background-color:rgb(43, 16, 92);
+      color: white;
+    }
+
+    .palletsC {
+      width: 19%;
+      border-left: solid 2px rgb(212, 135, 19);
+      margin-top: 0.5rem;
+    }
+
+    tr {
+      min-height: 100px;
+    }
+    th, .palletTitle {
+      font-family: "Poppins", sans-serif;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      margin: 0;
+    }
+    tr {
+      font-family: "Poppins", sans-serif;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .page-break {
+      page-break-before: always;
+      break-before: page;
+      margin-top: 250px;
+    }
+    .headerLeft {
+      text-align: left;
+    }
+    .headerRight {
+      text-align: right;
+      display: flex;
+      justify-content: flex-end;
+      flex-direction: column;
+      align-items: flex-end;
+      
+    }
+
+    .notes {
+      border-bottom: 4px solid rgb(7, 31, 61);
+      display: Flex;
+      padding-bottom: .25rem;
+    }
+
+    .notes p {
+      margin: 0;
+    }
+
+    .notes p[1] {
+      color:  rgb(7, 31, 61);
+    }
+
+    .ASAP {
+      padding:15px 50px;
+      background-color:rgb(180, 60, 23);
+      flex: 0 0 auto;
+      width: auto;
+      border-radius: 16px;
+    }
+
+    .ASAP p {
+      color: white;
+      font-size: 24px;
+    }
+    .flexSection {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    body {
+      margin-top: 300px;
+      margin-bottom: 100px;
+    }
+
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+      }
+
+      .no-print {
+        display: none;
+        gap: 10px;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+    }
+  </style>
+  </head>
+
+  <body>
+    <% const order = data?.order || {}; const items = data?.items || []; const optimization = data?.optimization || {}; %>
+    <!-- Start Header Block -->
+    
+    <div id="header" style="position: fixed; top: 0; left:0; right: 0; width: 100%; height: 175px;">
+      <div class="clipboardTop"  >
+        <div
+          style="width: 150px; height: auto; overflow: hidden; padding-bottom: 1rem;">
+          <img
+            src="<%= order['Clipboard Image']?.[0]?.thumbnails?.large?.url || '' %>"
+            alt="Image"
+            style="width: 100%; height: 100%; object-fit: cover;">
         </div>
-      `
-    });
-    await browser.close();
 
-    res.set({
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': 'attachment; filename="workorder.pdf"'
-    });
+      </div>
+      <div class="header">
+        <div class="headerLeft">
+          <h1 class="poppins-bold"
+            style="color: rgb(7, 31, 61); font-size: 24px;">WORK ORDER:
+            <%= order['WO #'] || '' %></h1>
+          <p>PO#: <%= order['PO Number'] || '' %></p>
+          <p>Customer: <%= order['Customer Name']?.[0] || '' %></p>
+          <p>Ship To: <%= order['Ship To City (Reference)']?.[0] || '' %></p>
+        </div>
+        <div class="headerRight">
+          <h2 class="poppins-medium" style="font-size: 18px;">Ship Date:
+             <%= order['Scheduled Ship Date'] || '' %></h2>
+          <% if (order['ASAP']) { %>
+          <div class="ASAP">
+            <p class="poppins-bold">ASAP</p>
+          </div>
+        <% } %>
+          
+        </div>
+      </div>
+      <div class="section notes">
+        <p><strong>Notes</strong>&nbsp;&nbsp;&nbsp;</p>
+        <p><%= order['Order Notes'] || '' %></p>
+      </div>
+      </div>
 
-    res.send(pdfBuffer);
-  } catch (err) {
-    console.error('PDF generation error:', err);
-    res.status(500).send('PDF generation failed');
-  }
-});
+      
+      <!-- End Header Block -->
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`PDF generator running on port ${PORT}`);
-});
+      <!-- Page 1 -->
+      <div class="section">
+        <table class="table1">
+          <thead class="thead1">
+            <tr>
+              <th style="width: 10%;">Qty</th>
+              <th style="width: 30%;">Machine</th>
+              <th style="width: 40%;">Build Notes</th>
+              <th style="width: 20%;">Welder</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% items.forEach(item => { %>
+              <tr style="height: 45px;">
+                <td><%= item.quantity %></td>
+                <td><%= item.name %></td>
+                <td><%= item.notes || '' %></td>
+                <td></td>
+              </tr>
+            <% }) %>
+            <!-- Add more rows dynamically -->
+          </tbody>
+        </table>
+
+      </div>
+
+    <!-- End Page 1-->
+    <!--page 2-->
+<div class="container page-break" ></div>
+      <div class="flexSection">
+        <table class="table2">
+          <thead class="thead2">
+            <tr>
+              <th style="width: 8%;">Qty</th>
+              <th style="width: 24%;">Machine</th>
+              <th style="width: 25%;">Build Notes</th>
+              <th style="width: 15%;">Drilled By</th>
+              <th style="width: 10%;">Weight</th>
+              <th style="width: 8%;">Pallet</th>
+            </tr>
+          </thead>
+          <tbody>
+          <% items.forEach(item => { %>
+              <tr style="height: 45px;">
+                <td><%= item.quantity %></td>
+                <td><%= item.name %></td>
+                <td><%= item.notes || '' %></td>
+                <td></td>
+                <td><%= item.weight %></td>
+                <td></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <div class="palletsC">
+          <div style="padding: 8px; background-color: rgb(212, 135, 19);">
+            <h3 class="palletTitle" style="color: white;">Pallets</h3></div>
+          <div class="palletLine"
+            style="margin: 0px 4px 35px 4px;"><p>#1</p></div>
+          <div class="palletLine"
+            style="margin: 0px 4px 35px 4px;border-top: solid 1px rgb(212, 135, 19)"><p>#2</p></div>
+          <div class="palletLine"
+            style="margin: 0px 4px 35px 4px;border-top: solid 1px rgb(212, 135, 19)"><p>#3</p></div>
+          <div class="palletLine"
+            style="margin: 0px 4px 35px 4px;border-top: solid 1px rgb(212, 135, 19)"><p>#4</p></div>
+          <div class="palletLine"
+            style="margin: 0px 4px 35px 4px;border-top: solid 1px rgb(212, 135, 19)"><p>#5</p></div>
+          <div class="palletLine"
+            style="margin: 0px 4px 35px 4px;border-top: solid 1px rgb(212, 135, 19)"><p>#6</p></div>
+
+        </div>
+
+      </div>
+    <!-- End Page 2-->
+    <!--Page 3-->
+    <div class="container page-break" ></div>
+      <div class="flexSection"
+        style="gap: 20px;max-width: 100%;flex-wrap: wrap;">
+
+        <!-- Reapeat this block for each machine -->
+        <% items.forEach(item => { %>
+        <div style="width: 48%; display: flex; flex-direction: column;">
+          <p><%= item.quantity %> - <%= item.name %> <%= item.notes || '' %></p>
+          <table class="table3">
+
+            <thead class="thead2">
+              <tr>
+                <th style="width: 8%;">Qty</th>
+                <th style="width: 20%;">Size</th>
+                <th style="width: 20%;">Cut</th>
+                <th style="width: 52%;">Steel</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% (item.cuts || []).forEach(cut => { %>
+                <tr style="height: 45px;">
+                  <td><%= cut.quantity %></td>
+                  <td><%= cut.length %></td>
+                  <td><%= cut.cut_type %></td>
+                  <td><%= cut.material %></td>
+                </tr>
+              <% }) %>
+
+              <!-- Add more rows dynamically for each cut for the machine -->
+            </tbody>
+          </table>
+        </div>
+         <% }) %>
+
+      </div>
+
+
+    <!-- End Page 3 -->
+    <!-- Page 4 -->
+    <div class="container page-break" ></div>
+    <div class="flexSection">
+      <div class="section" style="width: 60%">
+        <h2>Bases</h2>
+        <table class="table4">
+          <thead class="thead4">
+            <tr>
+              <th style="width: 10%;">Qty</th>
+              <th style="width: 40%;">Machine</th>
+              <th style="width: 50%;">Build Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+          <% items.forEach(item => { %>
+              <tr style="">
+                <td><%= item.quantity %></td>
+                <td><%= item.name %></td>
+                <td><%= item.notes || '' %></td>
+              </tr>
+            <% }) %>
+
+            <!-- Add more rows dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      
+
+      <div class="section"  style="width: 35%">
+        <h2>Steel</h2>
+        <table class="table4">
+          <thead class="thead4">
+            <tr>
+              <th style="width: 10%;">Qty</th>
+              <th style="width: 30%;">Steel</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% Object.entries(optimization.materials || {}).forEach(([name, mat]) => { %>
+            <tr>
+              <td><%= mat.total_bars %></td>
+              <td><%= name %></td>
+            </tr>
+          <% }) %>
+
+            <!-- Add more rows dynamically for each material needed-->
+          </tbody>
+        </table>
+        </div>
+      </div>
+      <!-- End Page 4 -->
+      <!-- Footer Block -->
+      <div class="footer" id="footer" style="position: fixed; bottom: 0; left:0; right: 0; width: 100%; height: 100px;">
+        <div
+          style="width: 30%; height: 80px; overflow: hidden; padding-bottom: 1rem;">
+          <img src="https://washmachinebases.com/a/A/Artboard%201%20copy.png"
+            alt="Image"
+            style="width: 100%; height: 100%; object-fit: contain;">
+        </div>
+        <p class="poppins-bold" style="font-size: 20px; width: 30%"></span></p>
+        <div style="width: 30%"></div>
+        
+      </div>
+      <!-- End Footer Block -->
+    
+  </body>
+</html>
