@@ -254,32 +254,10 @@ tbody {
       visibility: hidden;
       page-break-before: always;
     }
-
-/* General styling */
-.item-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-between;
-}
-
-.grid-item {
-  width: 48%;
-  box-sizing: border-box;
-  page-break-inside: avoid;
-  break-inside: avoid;
-}
-
-/* Simulate top spacing for items that might land at top of page */
-@media print {
-  .grid-item:nth-child(odd) {
-    margin-top: 0.5in;
-  }
-
-  .grid-item:nth-child(1) {
-    margin-top: 0; /* first item should not have extra margin */
-  }
-}
+    
+    .margintest {
+      margin: 300px .25in .25in 300px;
+    }
   </style>
   </head>
 
@@ -404,12 +382,12 @@ tbody {
     <!--Page 3-->
     
     <div class="container page-break" ></div>
-      <!-- <div class="flexSection"
+      <div class="flexSection margintest"
         style="gap: 20px;max-width: 100%;flex-wrap: wrap;">
 
 
 
-        <!-- Reapeat this block for each machine --
+        <!-- Reapeat this block for each machine -->
         <% items.forEach(item => { %>
           <div class="page-spacer"></div>
         <div style="width: 48%; display: flex; flex-direction: column;">
@@ -434,40 +412,13 @@ tbody {
                 </tr>
               <% }) %>
 
-              <!-- Add more rows dynamically for each cut for the machine --
+              <!-- Add more rows dynamically for each cut for the machine -->
             </tbody>
           </table>
         </div>
          <% }) %>
 
-      </div> -->
-<div class="item-grid">
-  <% items.forEach((item, i) => { %>
-    <div class="grid-item">
-      <p><%= item.quantity %> - <%= item.name %> <%= item.notes || '' %></p>
-      <table class="table3">
-        <thead>
-          <tr>
-            <th style="width: 8%;">Qty</th>
-            <th style="width: 20%;">Size</th>
-            <th style="width: 20%;">Cut</th>
-            <th style="width: 52%;">Steel</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% (item.cuts || []).forEach(cut => { %>
-            <tr style="height: 45px;">
-              <td><%= cut.quantity %></td>
-              <td><%= cut.length %></td>
-              <td><%= cut.cut_type %></td>
-              <td><%= cut.material %></td>
-            </tr>
-          <% }) %>
-        </tbody>
-      </table>
-    </div>
-  <% }) %>
-</div>
+      </div> 
 
     <!-- End Page 3 -->
     <!-- Page 4 -->
