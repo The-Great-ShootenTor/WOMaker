@@ -247,6 +247,45 @@ tbody {
         justify-content: flex-start;
       }
     }
+
+    .page-spacer {
+      height: 2in;
+      display: block;
+      visibility: hidden;
+      page-break-before: always;
+    }
+
+    .page-spacer:first-child {
+      display: none; /* No margin before first item on first page */
+    }
+
+    .item-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+/* Each grid item is 48% width (2 per row) */
+.grid-item {
+  width: 48%;
+  box-sizing: border-box;
+  page-break-inside: avoid;
+  break-inside: avoid;
+  padding-top: 1in; /* simulates page top margin */
+}
+
+/* Only apply spacing if the item is near top of a page */
+@media print {
+  .grid-item::before {
+    content: "";
+    display: block;
+    height: 0;
+  }
+
+  .grid-item:first-child {
+    padding-top: 0; /* don’t add spacing to first item */
+  }
   </style>
   </head>
 
@@ -369,12 +408,16 @@ tbody {
       </div>
     <!-- End Page 2-->
     <!--Page 3-->
+    
     <div class="container page-break" ></div>
-      <div class="flexSection"
+      <!-- <div class="flexSection"
         style="gap: 20px;max-width: 100%;flex-wrap: wrap;">
 
-        <!-- Reapeat this block for each machine -->
+
+
+        <!-- Reapeat this block for each machine --
         <% items.forEach(item => { %>
+          <div class="page-spacer"></div>
         <div style="width: 48%; display: flex; flex-direction: column;">
           <p><%= item.quantity %> - <%= item.name %> <%= item.notes || '' %></p>
           <table class="table3">
@@ -397,14 +440,40 @@ tbody {
                 </tr>
               <% }) %>
 
-              <!-- Add more rows dynamically for each cut for the machine -->
+              <!-- Add more rows dynamically for each cut for the machine --
             </tbody>
           </table>
         </div>
          <% }) %>
 
-      </div>
-
+      </div> -->
+<div class="item-grid">
+  <% items.forEach((item, i) => { %>
+    <div class="grid-item">
+      <p><%= item.quantity %> - <%= item.name %> <%= item.notes || '' %></p>
+      <table class="table3">
+        <thead>
+          <tr>
+            <th style="width: 8%;">Qty</th>
+            <th style="width: 20%;">Size</th>
+            <th style="width: 20%;">Cut</th>
+            <th style="width: 52%;">Steel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% (item.cuts || []).forEach(cut => { %>
+            <tr style="height: 45px;">
+              <td><%= cut.quantity %></td>
+              <td><%= cut.length %></td>
+              <td><%= cut.cut_type %></td>
+              <td><%= cut.material %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% }) %>
+</div>
 
     <!-- End Page 3 -->
     <!-- Page 4 -->
