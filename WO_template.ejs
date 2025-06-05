@@ -248,12 +248,7 @@ tbody {
       }
     }
 
-    .page-spacer {
-      height: 2in;
-      display: block;
-      visibility: hidden;
-      page-break-before: always;
-    }
+
     
   </style>
   </head>
@@ -386,7 +381,6 @@ tbody {
 
         <!-- Reapeat this block for each machine -->
         <% items.forEach(item => { %>
-          <div class="page-spacer"></div>
         <div style="width: 48%; display: flex; flex-direction: column;">
           <p><%= item.quantity %> - <%= item.name %> <%= item.notes || '' %></p>
           <table class="table3">
