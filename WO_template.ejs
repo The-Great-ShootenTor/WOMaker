@@ -253,38 +253,7 @@ tbody {
     <% const order = data?.order || {}; const items = data?.items || []; const optimization = data?.optimization || {}; %>
     <!-- Start Header Block -->
     
-    <div id="header" style="width: 100%;">
-      <div class="clipboardTop"  >
-        <div
-          style="width: 150px; height: auto; overflow: hidden; padding-bottom: 1rem;">
-          <img
-            src="[Clipboard Image.Large.URL]"
-            alt="Image"
-            style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
 
-      </div>
-      <div class="header">
-        <div class="headerLeft">
-          <h1 class="poppins-bold"
-            style="color: rgb(7, 31, 61); font-size: 24px;">WORK ORDER:
-            <%= order['WO #'] || '' %></h1>
-          <p>PO#: <%= order['PO Number'] || '' %></p>
-          <p>Customer: <%= order['Customer Name']?.[0] || '' %></p>
-          <p>Ship To: <%= order['Ship to Address']?.[0] || '' %></p>
-        </div>
-        <div class="headerRight">
-          <h2 class="poppins-medium" style="font-size: 18px;">Ship Date:
-            Ship Date: <%= order['Scheduled Ship Date'] || '' %></h2>
-          <% if (order['ASAP']) { %>
-          <div class="ASAP">
-            <p class="poppins-bold">ASAP</p>
-          </div>
-        <% } %>
-          
-        </div>
-      </div>
-      </div>
 
       <div class="section notes">
         <p><strong>Notes</strong>&nbsp;&nbsp;&nbsp;</p>
@@ -455,19 +424,7 @@ tbody {
         </table>
       </div>
       <!-- End Page 4 -->
-      <!-- Footer Block -->
-      <div class="footer" id="footer" style="position: fixed; bottom: 0; width: 100%;">
-        <div
-          style="width: 30%; height: 80px; overflow: hidden; padding-bottom: 1rem;">
-          <img src="https://washmachinebases.com/a/A/Artboard%201%20copy.png"
-            alt="Image"
-            style="width: 100%; height: 100%; object-fit: contain;">
-        </div>
-        <p class="poppins-bold" style="font-size: 20px; width: 30%"><span class="pageNumber"></span> of <span class="totalPages"></span></p>
-        <div style="width: 30%"></div>
-        
-      </div>
-      <!-- End Footer Block -->
+
     
   </body>
 </html>
