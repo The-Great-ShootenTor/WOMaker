@@ -28,7 +28,7 @@ app.post('/generate-pdf', async (req, res) => {
       printBackground: true,
       displayHeaderFooter: true,
       margin: {
-        top: '100px', // reserve space for header
+        top: '400px', // reserve space for header
         bottom: '100px' // reserve space for footer
       },
       headerTemplate: `
