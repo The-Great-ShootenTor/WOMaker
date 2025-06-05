@@ -232,7 +232,7 @@ tbody {
     }
     body {
       margin-top: 200px;
-      margin-bottom: 150px;
+      margin-bottom: 100px;
     }
 
     @media print {
@@ -259,7 +259,7 @@ tbody {
         <div
           style="width: 150px; height: auto; overflow: hidden; padding-bottom: 1rem;">
           <img
-            src="[Clipboard Image.Large.URL]"
+            src="<%= order['Clipboard Image']?.[0]?.thumbnails?.large?.url || '' %>"
             alt="Image"
             style="width: 100%; height: 100%; object-fit: cover;">
         </div>
@@ -276,7 +276,7 @@ tbody {
         </div>
         <div class="headerRight">
           <h2 class="poppins-medium" style="font-size: 18px;">Ship Date:
-            Ship Date: <%= order['Scheduled Ship Date'] || '' %></h2>
+             <%= order['Scheduled Ship Date'] || '' %></h2>
           <% if (order['ASAP']) { %>
           <div class="ASAP">
             <p class="poppins-bold">ASAP</p>
@@ -285,12 +285,13 @@ tbody {
           
         </div>
       </div>
-      </div>
-
       <div class="section notes">
         <p><strong>Notes</strong>&nbsp;&nbsp;&nbsp;</p>
         <p><%= order['Order Notes'] || '' %></p>
       </div>
+      </div>
+
+      
       <!-- End Header Block -->
 
       <!-- Page 1 -->
@@ -375,7 +376,7 @@ tbody {
         <!-- Reapeat this block for each machine -->
         <% items.forEach(item => { %>
         <div style="width: 48%; display: flex; flex-direction: column;">
-          <p>[items.quanitity] - [items.name] [items.notes]</p>
+          <p><%= item.quantity %> - <%= item.name %> <%= item.notes || '' %></p>
           <table class="table3">
 
             <thead class="thead2">
@@ -408,14 +409,14 @@ tbody {
     <!-- End Page 3 -->
     <!-- Page 4 -->
     <div class="container page-break" ></div>
+    <div class="flexSection">
       <div class="section">
         <table class="table4">
           <thead class="thead4">
             <tr>
               <th style="width: 10%;">Qty</th>
-              <th style="width: 30%;">Machine</th>
-              <th style="width: 40%;">Build Notes</th>
-              <th style="width: 20%;">Weight</th>
+              <th style="width: 40%;">Machine</th>
+              <th style="width: 50%;">Build Notes</th>
             </tr>
           </thead>
           <tbody>
@@ -424,7 +425,6 @@ tbody {
                 <td><%= item.quantity %></td>
                 <td><%= item.name %></td>
                 <td><%= item.notes || '' %></td>
-                <td><%= item.weight %></td>
               </tr>
             <% }) %>
 
@@ -433,9 +433,10 @@ tbody {
         </table>
       </div>
 
-      <h2>Steel</h2>
+      
 
       <div class="section">
+        <h2>Steel</h2>
         <table class="table4">
           <thead class="thead4">
             <tr>
@@ -454,10 +455,11 @@ tbody {
             <!-- Add more rows dynamically for each material needed-->
           </tbody>
         </table>
+        </div>
       </div>
       <!-- End Page 4 -->
       <!-- Footer Block -->
-      <div class="footer" id="footer" style="position: fixed; bottom: 0; left:0; right: 0; width: 100%; height: 175px;">
+      <div class="footer" id="footer" style="position: fixed; bottom: 0; left:0; right: 0; width: 100%; height: 100px;">
         <div
           style="width: 30%; height: 80px; overflow: hidden; padding-bottom: 1rem;">
           <img src="https://washmachinebases.com/a/A/Artboard%201%20copy.png"
