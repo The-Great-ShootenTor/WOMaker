@@ -28,11 +28,20 @@ app.post('/generate-pdf', async (req, res) => {
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
     const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      displayHeaderFooter: false
+  format: 'A4',
+  printBackground: true,
+  displayHeaderFooter: true,
+      margin: {
+        top: '0px', // space for header
+        bottom: '0px' // space for footer
+      },
+      headerTemplate: ,
+      footerTemplate: `
+        <div style="font-size:10px; text-align:center; width:100%;">
+          Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+        </div>
+      `
     });
-
     await browser.close();
 
     res.set({
