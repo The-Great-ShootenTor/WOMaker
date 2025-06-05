@@ -35,7 +35,7 @@ app.post('/generate-pdf', async (req, res) => {
         top: '0px', // space for header
         bottom: '0px' // space for footer
       },
-      headerTemplate: ,
+      headerTemplate: ``,
       footerTemplate: `
         <div style="font-size:10px; text-align:center; width:100%;">
           Page <span class="pageNumber"></span> of <span class="totalPages"></span>
