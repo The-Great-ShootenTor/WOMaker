@@ -2,20 +2,16 @@ const express = require('express');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
-const ejs = require('ejs');Add commentMore actions
+const ejs = require('ejs');
 
-const app = express(); // <== this is the line you were missing!
+const app = express();
 app.use(express.json({ limit: '10mb' }));
 
 app.post('/generate-pdf', async (req, res) => {
-  const payload = Array.isArray(req.body) ? req.body[0] : req.body;
-  const data = {
-    order: payload.order,
-    items: payload.items,
-    optimization: payload.optimization
-  };
-
   try {
+    const data = req.body;
+
+    // Render EJS template with provided data
     const templatePath = path.join(__dirname, 'WO_template.ejs');
     const html = await ejs.renderFile(templatePath, { data });
 
@@ -28,14 +24,44 @@ app.post('/generate-pdf', async (req, res) => {
     await page.setContent(html, { waitUntil: 'networkidle0' });
 
     const pdfBuffer = await page.pdf({
-  format: 'A4',
-  printBackground: true,
-  displayHeaderFooter: true,
+      format: 'A4',
+      printBackground: true,
+      displayHeaderFooter: true,
       margin: {
-        top: '0px', // space for header
-        bottom: '0px' // space for footer
+        top: '100px', // reserve space for header
+        bottom: '100px' // reserve space for footer
       },
-      headerTemplate: ``,
+      headerTemplate: `
+      `,
       footerTemplate: `
-        <div style="font-size:10px; text-align:center; width:100%;">
+        <style>
+          .footer {
+            font-size: 15px;
+            width: 100%;
+            text-align: center;
+          }
+        </style>
+        <div class="footer">
           Page <span class="pageNumber"></span> of <span class="totalPages"></span>
+        </div>
+      `
+    });
+
+    await browser.close();
+
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'inline; filename="workorder.pdf"'
+    });
+
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error('PDF generation error:', err);
+    res.status(500).send('PDF generation failed');
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`PDF generator running on port ${PORT}`);
+});
