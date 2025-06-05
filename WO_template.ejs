@@ -231,7 +231,7 @@ tbody {
       align-items: flex-start;
     }
     body {
-      margin-top: 250px;
+      margin-top: 350px;
       margin-bottom: 100px;
     }
 
@@ -272,7 +272,7 @@ tbody {
             <%= order['WO #'] || '' %></h1>
           <p>PO#: <%= order['PO Number'] || '' %></p>
           <p>Customer: <%= order['Customer Name']?.[0] || '' %></p>
-          <p>Ship To: <%= order['Ship to Address']?.[0] || '' %></p>
+          <p>Ship To: <%= order['Ship To City (Reference)']?.[0] || '' %></p>
         </div>
         <div class="headerRight">
           <h2 class="poppins-medium" style="font-size: 18px;">Ship Date:
@@ -436,9 +436,9 @@ tbody {
 
       
 
-      <div class="section">
+      <div class="section"  style="width: 35%">
         <h2>Steel</h2>
-        <table class="table4" style="width: 35%">
+        <table class="table4">
           <thead class="thead4">
             <tr>
               <th style="width: 10%;">Qty</th>
